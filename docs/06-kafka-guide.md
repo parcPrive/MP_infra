@@ -304,6 +304,18 @@ docker exec commerce-kafka /opt/kafka/bin/kafka-console-consumer.sh \
   --timeout-ms 10000
 ```
 
+그리고 inventory-service가 `payment.completed`를 소비합니다.
+
+```text
+payment.completed
+  |
+  v
+inventory-service-group
+  |
+  v
+Inventory decreased 로그
+```
+
 이때 배울 것:
 
 ```text

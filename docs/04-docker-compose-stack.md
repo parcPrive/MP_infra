@@ -11,6 +11,7 @@ Docker 단독 실행은 컨테이너 하나씩 실행할 때는 괜찮습니다.
 ```text
 order-service
 payment-service
+inventory-service
 PostgreSQL
 Redis
 NGINX
@@ -93,6 +94,7 @@ ports:
 | --- | --- | --- |
 | order-service | `8081` | `8080` |
 | payment-service | `8083` | `8080` |
+| inventory-service | `8084` | `8080` |
 | nginx | `8082` | `80` |
 | PostgreSQL | `15432` | `5432` |
 | Redis | `16379` | `6379` |

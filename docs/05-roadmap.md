@@ -21,6 +21,7 @@
 14. order-service -> Kafka order.created 이벤트 발행
 15. payment-service -> Kafka order.created 이벤트 소비
 16. payment-service -> Kafka payment.completed 이벤트 발행
+17. inventory-service -> Kafka payment.completed 이벤트 소비
 ```
 
 ## 완료: Redis 캐시
@@ -157,7 +158,7 @@ payment.completed 메시지 발행
 Kafka CLI consumer로 메시지 확인
 ```
 
-## 다음 1단계: inventory-service Kafka Consumer
+## 완료: inventory-service Kafka Consumer
 
 목표:
 
@@ -175,6 +176,33 @@ inventory-service
   |
   v
 Inventory decreased 로그 출력
+```
+
+검증 완료:
+
+```text
+inventory-service 컨테이너 실행
+inventory-service-group 생성
+payment.completed 메시지 소비
+Inventory decreased 로그 확인
+consumer lag = 0
+```
+
+## 다음 1단계: Kafka 안정화
+
+목표:
+
+```text
+현재 이벤트 체인에 retry topic / DLQ / 실패 시나리오를 추가합니다.
+```
+
+후보:
+
+```text
+잘못된 JSON 메시지 투입
+consumer 파싱 실패
+DLQ topic으로 이동
+consumer lag 확인
 ```
 
 ## 다음 2단계: Kubernetes

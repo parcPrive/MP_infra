@@ -41,6 +41,7 @@ Build a small Spring Boot order service and evolve it through the following stag
 - `POST /orders` publishes `order.created` events to Kafka
 - `payment-service` consumes `order.created` events from Kafka
 - `payment-service` publishes `payment.completed` events to Kafka
+- `inventory-service` consumes `payment.completed` events from Kafka
 
 ## Learning Hub
 
@@ -54,6 +55,7 @@ Start here when studying the project:
 - [Roadmap](docs/05-roadmap.md)
 - [Kafka Guide](docs/06-kafka-guide.md)
 - [payment-service Consumer Guide](docs/07-payment-service-consumer-guide.md)
+- [inventory-service Consumer Guide](docs/08-inventory-service-consumer-guide.md)
 
 ## First Milestone
 
@@ -237,6 +239,13 @@ curl http://localhost:8083/actuator/health
 docker logs --tail 100 payment-service | grep 'Payment completed'
 ```
 
+Check inventory-service:
+
+```bash
+curl http://localhost:8084/actuator/health
+docker logs --tail 100 inventory-service | grep 'Inventory decreased'
+```
+
 ## Learning Log
 
 Each major stage should leave a short document under `docs/`.
@@ -249,3 +258,4 @@ Each major stage should leave a short document under `docs/`.
 - [Roadmap](docs/05-roadmap.md)
 - [Kafka Guide](docs/06-kafka-guide.md)
 - [payment-service Consumer Guide](docs/07-payment-service-consumer-guide.md)
+- [inventory-service Consumer Guide](docs/08-inventory-service-consumer-guide.md)

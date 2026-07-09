@@ -13,6 +13,7 @@
 5. [다음 작업 로드맵](./05-roadmap.md)
 6. [Kafka 해설](./06-kafka-guide.md)
 7. [payment-service Consumer 해설](./07-payment-service-consumer-guide.md)
+8. [inventory-service Consumer 해설](./08-inventory-service-consumer-guide.md)
 
 ## 현재 완성된 흐름
 
@@ -45,6 +46,11 @@ payment-service container
   +-- order.created topic 소비
   +-- 결제 처리 완료 로그 출력
   +-- payment.completed topic 발행
+
+inventory-service container
+  |
+  +-- payment.completed topic 소비
+  +-- 재고 차감 로그 출력
 ```
 
 ## 핵심 포트
@@ -74,4 +80,5 @@ POST /orders
   -> Kafka order.created 이벤트 발행
   -> payment-service가 order.created 이벤트 소비
   -> payment-service가 payment.completed 이벤트 발행
+  -> inventory-service가 payment.completed 이벤트 소비
 ```

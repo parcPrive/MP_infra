@@ -51,6 +51,23 @@ services:
     ports:
       - "8083:8080"
 
+  # payment.completed Kafka 이벤트를 소비해 재고 차감을 흉내내는 서비스입니다.
+  inventory-service:
+    build:
+      context: ../apps/inventory-service
+      dockerfile: Dockerfile
+    image: inventoryservice:0.1
+    container_name: inventory-service
+    depends_on:
+      kafka:
+        condition: service_healthy
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      KAFKA_CONSUMER_GROUP: inventory-service-group
+      PAYMENT_COMPLETED_TOPIC: payment.completed
+    ports:
+      - "8084:8080"
+
   # 주문 데이터가 저장되는 PostgreSQL 컨테이너입니다.
   order-db:
     image: postgres:16-alpine

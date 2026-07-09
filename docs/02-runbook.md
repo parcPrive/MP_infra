@@ -68,6 +68,7 @@ commerce-redis   Up (healthy)
 order-db         Up (healthy)
 order-service    Up
 payment-service  Up
+inventory-service Up
 ```
 
 ## 5. API 확인
@@ -214,6 +215,27 @@ payment-service 헬스 체크:
 
 ```bash
 curl http://localhost:8083/actuator/health
+```
+
+inventory-service 소비 로그 확인:
+
+```bash
+docker logs --tail 100 inventory-service | grep 'Inventory decreased'
+```
+
+inventory-service 헬스 체크:
+
+```bash
+curl http://localhost:8084/actuator/health
+```
+
+inventory-service consumer lag 확인:
+
+```bash
+docker exec commerce-kafka /opt/kafka/bin/kafka-consumer-groups.sh \
+  --bootstrap-server localhost:9092 \
+  --describe \
+  --group inventory-service-group
 ```
 
 ## 9. 로그 확인

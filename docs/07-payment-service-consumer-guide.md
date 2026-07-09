@@ -247,7 +247,7 @@ Published payment.completed event. orderId=6, topic=payment.completed, partition
 
 ## 10. 다음 확장
 
-다음 단계에서는 inventory-service가 payment-service 결과를 소비할 수 있습니다.
+현재는 inventory-service가 payment-service 결과를 소비합니다.
 
 ```text
 inventory-service
