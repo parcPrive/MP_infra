@@ -21,6 +21,9 @@ payment-service
   |
   v
 Payment completed 로그 출력
+  |
+  v
+payment.completed 이벤트 발행
 ```
 
 ## 2. 현재 구현된 파일
@@ -31,6 +34,8 @@ Payment completed 로그 출력
 | `OrderCreatedEvent.java` | Kafka 메시지를 Java 객체로 표현 |
 | `PaymentEventConsumer.java` | Kafka topic을 구독하고 메시지 수신 |
 | `PaymentService.java` | 결제 처리 로직 담당 |
+| `PaymentCompletedEvent.java` | 결제 완료 이벤트 DTO |
+| `PaymentEventPublisher.java` | `payment.completed` 이벤트 발행 담당 |
 | `Dockerfile` | payment-service Docker 이미지 생성 |
 
 ## 3. Kafka Consumer 설정
@@ -49,6 +54,8 @@ spring.kafka.consumer.group-id=${KAFKA_CONSUMER_GROUP:payment-service-group}
 spring.kafka.consumer.auto-offset-reset=earliest
 spring.kafka.consumer.key-deserializer=org.apache.kafka.common.serialization.StringDeserializer
 spring.kafka.consumer.value-deserializer=org.apache.kafka.common.serialization.StringDeserializer
+spring.kafka.producer.key-serializer=org.apache.kafka.common.serialization.StringSerializer
+spring.kafka.producer.value-serializer=org.apache.kafka.common.serialization.StringSerializer
 ```
 
 의미:
@@ -59,6 +66,7 @@ spring.kafka.consumer.value-deserializer=org.apache.kafka.common.serialization.S
 | `group-id` | Consumer Group 이름 |
 | `auto-offset-reset=earliest` | 저장된 offset이 없으면 처음 메시지부터 읽기 |
 | `StringDeserializer` | Kafka 메시지 key/value를 문자열로 읽기 |
+| `StringSerializer` | Kafka 메시지 key/value를 문자열로 쓰기 |
 
 ## 4. @KafkaListener 문법
 
@@ -150,6 +158,26 @@ PaymentService로 결제 처리 위임
 Payment completed. orderId=5, userId=303, productId=1001, quantity=2
 ```
 
+그리고 결제 완료 이벤트를 발행합니다.
+
+```text
+payment.completed
+```
+
+예시 메시지:
+
+```json
+{
+  "paymentId": "PAY-6",
+  "orderId": 6,
+  "userId": 404,
+  "productId": 1200,
+  "quantity": 3,
+  "paymentStatus": "COMPLETED",
+  "occurredAt": "2026-07-09T04:57:07.013708430Z"
+}
+```
+
 ## 8. 실행 확인
 
 스택 실행:
@@ -178,6 +206,17 @@ payment-service 로그:
 docker logs --tail 100 payment-service | grep 'Payment completed'
 ```
 
+payment.completed 메시지:
+
+```bash
+docker exec commerce-kafka /opt/kafka/bin/kafka-console-consumer.sh \
+  --bootstrap-server localhost:9092 \
+  --topic payment.completed \
+  --from-beginning \
+  --max-messages 1 \
+  --timeout-ms 10000
+```
+
 ## 9. 현재 검증 결과
 
 검증된 흐름:
@@ -193,6 +232,9 @@ payment-service가 order.created 소비
   |
   v
 Payment completed 로그 출력
+  |
+  v
+payment.completed 이벤트 발행
 ```
 
 확인된 로그:
@@ -200,18 +242,18 @@ Payment completed 로그 출력
 ```text
 Consumed order.created event. orderId=5
 Payment completed. orderId=5, userId=303, productId=1001, quantity=2
+Published payment.completed event. orderId=6, topic=payment.completed, partition=0, offset=0
 ```
 
 ## 10. 다음 확장
 
-다음 단계에서는 payment-service 결과를 다시 Kafka로 발행할 수 있습니다.
+다음 단계에서는 inventory-service가 payment-service 결과를 소비할 수 있습니다.
 
 ```text
-payment-service
+inventory-service
   |
   v
-payment.completed topic
+payment.completed topic 소비
 ```
 
-그 다음 `inventory-service`가 결제 완료 이벤트를 받아 재고 차감을 처리하는 흐름으로 확장할 수 있습니다.
-
+`inventory-service`가 결제 완료 이벤트를 받아 재고 차감을 처리하는 흐름으로 확장할 수 있습니다.

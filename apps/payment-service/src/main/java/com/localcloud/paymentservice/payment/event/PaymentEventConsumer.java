@@ -15,10 +15,16 @@ public class PaymentEventConsumer {
 
     private final ObjectMapper objectMapper;
     private final PaymentService paymentService;
+    private final PaymentEventPublisher paymentEventPublisher;
 
-    public PaymentEventConsumer(ObjectMapper objectMapper, PaymentService paymentService) {
+    public PaymentEventConsumer(
+            ObjectMapper objectMapper,
+            PaymentService paymentService,
+            PaymentEventPublisher paymentEventPublisher
+    ) {
         this.objectMapper = objectMapper;
         this.paymentService = paymentService;
+        this.paymentEventPublisher = paymentEventPublisher;
     }
 
     @KafkaListener(
@@ -31,7 +37,9 @@ public class PaymentEventConsumer {
             OrderCreatedEvent event = objectMapper.readValue(message, OrderCreatedEvent.class);
 
             log.info("Consumed order.created event. orderId={}", event.orderId());
-            paymentService.processPayment(event);
+            PaymentCompletedEvent paymentCompletedEvent = paymentService.processPayment(event);
+
+            paymentEventPublisher.publishPaymentCompleted(paymentCompletedEvent);
         } catch (JacksonException exception) {
             // 다음 단계에서 DLQ를 붙이기 전까지는 파싱 실패 메시지를 로그로 남깁니다.
             log.warn("Failed to parse order.created event. message={}", message, exception);

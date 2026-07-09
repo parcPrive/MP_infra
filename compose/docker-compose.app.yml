@@ -47,6 +47,7 @@ services:
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       KAFKA_CONSUMER_GROUP: payment-service-group
       ORDER_CREATED_TOPIC: order.created
+      PAYMENT_COMPLETED_TOPIC: payment.completed
     ports:
       - "8083:8080"
 

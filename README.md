@@ -40,6 +40,7 @@ Build a small Spring Boot order service and evolve it through the following stag
 - `GET /orders/{id}` connected to Redis cache
 - `POST /orders` publishes `order.created` events to Kafka
 - `payment-service` consumes `order.created` events from Kafka
+- `payment-service` publishes `payment.completed` events to Kafka
 
 ## Learning Hub
 
@@ -213,6 +214,17 @@ Read Kafka messages:
 docker exec commerce-kafka /opt/kafka/bin/kafka-console-consumer.sh \
   --bootstrap-server localhost:9092 \
   --topic order.created \
+  --from-beginning \
+  --max-messages 1 \
+  --timeout-ms 10000
+```
+
+Read payment completed events:
+
+```bash
+docker exec commerce-kafka /opt/kafka/bin/kafka-console-consumer.sh \
+  --bootstrap-server localhost:9092 \
+  --topic payment.completed \
   --from-beginning \
   --max-messages 1 \
   --timeout-ms 10000

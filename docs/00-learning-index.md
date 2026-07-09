@@ -44,6 +44,7 @@ payment-service container
   |
   +-- order.created topic 소비
   +-- 결제 처리 완료 로그 출력
+  +-- payment.completed topic 발행
 ```
 
 ## 핵심 포트
@@ -72,4 +73,5 @@ GET /orders/{id}
 POST /orders
   -> Kafka order.created 이벤트 발행
   -> payment-service가 order.created 이벤트 소비
+  -> payment-service가 payment.completed 이벤트 발행
 ```

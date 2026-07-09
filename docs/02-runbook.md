@@ -181,6 +181,17 @@ docker exec commerce-kafka /opt/kafka/bin/kafka-console-consumer.sh \
   --timeout-ms 10000
 ```
 
+결제 완료 이벤트 읽기:
+
+```bash
+docker exec commerce-kafka /opt/kafka/bin/kafka-console-consumer.sh \
+  --bootstrap-server localhost:9092 \
+  --topic payment.completed \
+  --from-beginning \
+  --max-messages 1 \
+  --timeout-ms 10000
+```
+
 order-service 발행 로그 확인:
 
 ```bash
@@ -191,6 +202,12 @@ payment-service 소비 로그 확인:
 
 ```bash
 docker logs --tail 100 payment-service | grep 'Payment completed'
+```
+
+payment.completed 발행 로그 확인:
+
+```bash
+docker logs --tail 100 payment-service | grep 'Published payment.completed'
 ```
 
 payment-service 헬스 체크:

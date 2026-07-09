@@ -285,12 +285,23 @@ docker logs --tail 100 payment-service | grep 'Payment completed'
 
 ## 10. 다음 단계
 
-다음에는 payment-service가 처리 결과를 다시 Kafka로 발행하게 만듭니다.
+현재는 payment-service가 처리 결과를 다시 Kafka로 발행합니다.
 
 ```text
 payment-service
   |
   +-- payment.completed topic 발행
+```
+
+payment.completed 메시지 확인:
+
+```bash
+docker exec commerce-kafka /opt/kafka/bin/kafka-console-consumer.sh \
+  --bootstrap-server localhost:9092 \
+  --topic payment.completed \
+  --from-beginning \
+  --max-messages 1 \
+  --timeout-ms 10000
 ```
 
 이때 배울 것:

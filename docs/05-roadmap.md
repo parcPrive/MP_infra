@@ -20,6 +20,7 @@
 13. order-service -> Redis 조회 캐시
 14. order-service -> Kafka order.created 이벤트 발행
 15. payment-service -> Kafka order.created 이벤트 소비
+16. payment-service -> Kafka payment.completed 이벤트 발행
 ```
 
 ## 완료: Redis 캐시
@@ -128,7 +129,7 @@ order.created 메시지 소비
 Payment completed 로그 확인
 ```
 
-## 다음 1단계: payment.completed 이벤트 발행
+## 완료: payment.completed 이벤트 발행
 
 목표:
 
@@ -146,6 +147,34 @@ payment-service
   |
   v
 payment.completed
+```
+
+검증 완료:
+
+```text
+payment.completed topic 생성
+payment.completed 메시지 발행
+Kafka CLI consumer로 메시지 확인
+```
+
+## 다음 1단계: inventory-service Kafka Consumer
+
+목표:
+
+```text
+inventory-service가 payment.completed 이벤트를 소비해 재고 차감을 흉내냅니다.
+```
+
+예상 흐름:
+
+```text
+payment.completed
+  |
+  v
+inventory-service
+  |
+  v
+Inventory decreased 로그 출력
 ```
 
 ## 다음 2단계: Kubernetes
