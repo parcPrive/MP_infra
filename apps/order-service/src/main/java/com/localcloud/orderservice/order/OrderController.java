@@ -19,19 +19,20 @@ public class OrderController {
 
     private final OrderService orderService;
 
+    // Controller는 HTTP 요청을 받고, 실제 주문 로직은 Service에 위임합니다.
     public OrderController(OrderService orderService) {
         this.orderService = orderService;
     }
 
     @PostMapping
-    public ResponseEntity<Order> createOrder(@Valid @RequestBody CreateOrderRequest request) {
-        Order order = orderService.createOrder(request);
+    public ResponseEntity<OrderResponse> createOrder(@Valid @RequestBody CreateOrderRequest request) {
+        OrderResponse order = orderService.createOrder(request);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(order);
     }
 
     @GetMapping("/{id}")
-    public Order getOrder(@PathVariable Long id) {
+    public OrderResponse getOrder(@PathVariable Long id) {
         try {
             return orderService.getOrder(id);
         } catch (NoSuchElementException exception) {

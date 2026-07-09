@@ -32,7 +32,27 @@ Build a small Spring Boot order service and evolve it through the following stag
 - Java 17 configured
 - Spring Boot 4.1.0 configured
 - Gradle Wrapper configured
-- Basic Spring context test passing
+- `GET /health-check` endpoint created
+- `POST /orders` and `GET /orders/{id}` APIs created
+- Dockerfile created
+- Docker Compose stack created with NGINX, PostgreSQL, Redis, and order-service
+- `order-service` connected to PostgreSQL
+- `GET /orders/{id}` connected to Redis cache
+- `POST /orders` publishes `order.created` events to Kafka
+- `payment-service` consumes `order.created` events from Kafka
+
+## Learning Hub
+
+Start here when studying the project:
+
+- [Learning Index](docs/00-learning-index.md)
+- [Current Progress](docs/01-current-progress.md)
+- [Runbook](docs/02-runbook.md)
+- [order-service Code Guide](docs/03-order-service-code-guide.md)
+- [Docker Compose Stack Guide](docs/04-docker-compose-stack.md)
+- [Roadmap](docs/05-roadmap.md)
+- [Kafka Guide](docs/06-kafka-guide.md)
+- [payment-service Consumer Guide](docs/07-payment-service-consumer-guide.md)
 
 ## First Milestone
 
@@ -169,18 +189,51 @@ cd apps/order-service
 ./gradlew compileJava
 ```
 
+Run the full local Docker Compose stack:
+
+```bash
+docker compose -f compose/docker-compose.app.yml up --build -d
+```
+
+Check the API through NGINX:
+
+```bash
+curl http://localhost:8082/health-check
+```
+
+Stop the local stack:
+
+```bash
+docker compose -f compose/docker-compose.app.yml down
+```
+
+Read Kafka messages:
+
+```bash
+docker exec commerce-kafka /opt/kafka/bin/kafka-console-consumer.sh \
+  --bootstrap-server localhost:9092 \
+  --topic order.created \
+  --from-beginning \
+  --max-messages 1 \
+  --timeout-ms 10000
+```
+
+Check payment-service:
+
+```bash
+curl http://localhost:8083/actuator/health
+docker logs --tail 100 payment-service | grep 'Payment completed'
+```
+
 ## Learning Log
 
 Each major stage should leave a short document under `docs/`.
 
-- `docs/00-architecture.md`
-- `docs/01-linux.md`
-- `docs/02-docker.md`
-- `docs/03-docker-compose.md`
-- `docs/04-kafka.md`
-- `docs/05-kubernetes.md`
-- `docs/06-helm.md`
-- `docs/07-cicd.md`
-- `docs/08-monitoring.md`
-- `docs/09-troubleshooting.md`
-- `docs/10-terraform-aws.md`
+- [Learning Index](docs/00-learning-index.md)
+- [Current Progress](docs/01-current-progress.md)
+- [Runbook](docs/02-runbook.md)
+- [order-service Code Guide](docs/03-order-service-code-guide.md)
+- [Docker Compose Stack Guide](docs/04-docker-compose-stack.md)
+- [Roadmap](docs/05-roadmap.md)
+- [Kafka Guide](docs/06-kafka-guide.md)
+- [payment-service Consumer Guide](docs/07-payment-service-consumer-guide.md)
