@@ -238,6 +238,40 @@ docker exec commerce-kafka /opt/kafka/bin/kafka-consumer-groups.sh \
   --group inventory-service-group
 ```
 
+DLT topic 확인:
+
+```bash
+docker exec commerce-kafka /opt/kafka/bin/kafka-topics.sh \
+  --bootstrap-server localhost:9092 \
+  --list | grep DLT
+```
+
+payment.completed 실패 메시지 테스트:
+
+```bash
+echo 'broken-payment-message' | docker exec -i commerce-kafka \
+  /opt/kafka/bin/kafka-console-producer.sh \
+  --bootstrap-server localhost:9092 \
+  --topic payment.completed
+```
+
+inventory-service retry 로그 확인:
+
+```bash
+docker logs --tail 100 inventory-service | grep 'Kafka consume retry'
+```
+
+payment.completed.DLT 메시지 확인:
+
+```bash
+docker exec commerce-kafka /opt/kafka/bin/kafka-console-consumer.sh \
+  --bootstrap-server localhost:9092 \
+  --topic payment.completed.DLT \
+  --from-beginning \
+  --max-messages 1 \
+  --timeout-ms 10000
+```
+
 ## 9. 로그 확인
 
 전체 로그:

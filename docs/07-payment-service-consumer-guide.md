@@ -245,7 +245,7 @@ Payment completed. orderId=5, userId=303, productId=1001, quantity=2
 Published payment.completed event. orderId=6, topic=payment.completed, partition=0, offset=0
 ```
 
-## 10. 다음 확장
+## 10. 현재 확장 상태
 
 현재는 inventory-service가 payment-service 결과를 소비합니다.
 
@@ -256,4 +256,6 @@ inventory-service
 payment.completed topic 소비
 ```
 
-`inventory-service`가 결제 완료 이벤트를 받아 재고 차감을 처리하는 흐름으로 확장할 수 있습니다.
+즉, `payment-service`는 `order.created`를 소비하고 `payment.completed`를 발행하며, `inventory-service`는 이 결제 완료 이벤트를 받아 재고 차감 로그를 남깁니다.
+
+실패 메시지 retry/DLT 구성은 [Kafka Retry and DLT Guide](./09-kafka-retry-dlt-guide.md)에 정리했습니다.

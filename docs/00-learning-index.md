@@ -14,6 +14,7 @@
 6. [Kafka 해설](./06-kafka-guide.md)
 7. [payment-service Consumer 해설](./07-payment-service-consumer-guide.md)
 8. [inventory-service Consumer 해설](./08-inventory-service-consumer-guide.md)
+9. [Kafka Retry/DLT 해설](./09-kafka-retry-dlt-guide.md)
 
 ## 현재 완성된 흐름
 
@@ -51,6 +52,11 @@ inventory-service container
   |
   +-- payment.completed topic 소비
   +-- 재고 차감 로그 출력
+
+Kafka retry and DLT
+  |
+  +-- consumer 처리 실패 시 재시도
+  +-- 계속 실패하면 {topic}.DLT topic에 원본 메시지 저장
 ```
 
 ## 핵심 포트
@@ -81,4 +87,5 @@ POST /orders
   -> payment-service가 order.created 이벤트 소비
   -> payment-service가 payment.completed 이벤트 발행
   -> inventory-service가 payment.completed 이벤트 소비
+  -> 실패 메시지는 order.created.DLT 또는 payment.completed.DLT로 이동
 ```

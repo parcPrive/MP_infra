@@ -41,8 +41,8 @@ public class PaymentEventConsumer {
 
             paymentEventPublisher.publishPaymentCompleted(paymentCompletedEvent);
         } catch (JacksonException exception) {
-            // 다음 단계에서 DLQ를 붙이기 전까지는 파싱 실패 메시지를 로그로 남깁니다.
             log.warn("Failed to parse order.created event. message={}", message, exception);
+            throw new IllegalArgumentException("Invalid order.created event payload", exception);
         }
     }
 }

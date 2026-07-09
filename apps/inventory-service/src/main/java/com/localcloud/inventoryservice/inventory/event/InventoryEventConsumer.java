@@ -33,8 +33,8 @@ public class InventoryEventConsumer {
             log.info("Consumed payment.completed event. orderId={}", event.orderId());
             inventoryService.decreaseInventory(event);
         } catch (JacksonException exception) {
-            // 다음 단계에서 DLQ를 붙이기 전까지는 파싱 실패 메시지를 로그로 남깁니다.
             log.warn("Failed to parse payment.completed event. message={}", message, exception);
+            throw new IllegalArgumentException("Invalid payment.completed event payload", exception);
         }
     }
 }

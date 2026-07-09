@@ -194,7 +194,8 @@ LAG = 0
 ```text
 inventory-service에 DB 연결
 재고 부족 실패 이벤트 발행
-retry topic / DLQ 구성
+DLT 메시지 재처리 API
 Kafka consumer lag 모니터링
 ```
 
+Kafka retry/DLT 구성은 [Kafka Retry and DLT Guide](./09-kafka-retry-dlt-guide.md)에 정리했습니다.

@@ -22,6 +22,7 @@
 15. payment-service -> Kafka order.created 이벤트 소비
 16. payment-service -> Kafka payment.completed 이벤트 발행
 17. inventory-service -> Kafka payment.completed 이벤트 소비
+18. Kafka consumer retry / DLT
 ```
 
 ## 완료: Redis 캐시
@@ -188,24 +189,25 @@ Inventory decreased 로그 확인
 consumer lag = 0
 ```
 
-## 다음 1단계: Kafka 안정화
+## 완료: Kafka 안정화
 
 목표:
 
 ```text
-현재 이벤트 체인에 retry topic / DLQ / 실패 시나리오를 추가합니다.
+현재 이벤트 체인에 retry / DLT / 실패 시나리오를 추가합니다.
 ```
 
-후보:
+완료한 것:
 
 ```text
 잘못된 JSON 메시지 투입
 consumer 파싱 실패
-DLQ topic으로 이동
+지정 횟수만큼 retry
+DLT topic으로 이동
 consumer lag 확인
 ```
 
-## 다음 2단계: Kubernetes
+## 다음 1단계: Kubernetes
 
 목표:
 

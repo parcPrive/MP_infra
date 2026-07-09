@@ -48,6 +48,10 @@ services:
       KAFKA_CONSUMER_GROUP: payment-service-group
       ORDER_CREATED_TOPIC: order.created
       PAYMENT_COMPLETED_TOPIC: payment.completed
+      # Consumer 실패 처리 설정입니다. 3회 처리 시도 후 {topic}.DLT로 원본 메시지를 보냅니다.
+      KAFKA_RETRY_MAX_ATTEMPTS: 3
+      KAFKA_RETRY_BACKOFF_MS: 1000
+      KAFKA_DLT_SUFFIX: .DLT
     ports:
       - "8083:8080"
 
@@ -65,6 +69,10 @@ services:
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       KAFKA_CONSUMER_GROUP: inventory-service-group
       PAYMENT_COMPLETED_TOPIC: payment.completed
+      # Consumer 실패 처리 설정입니다. 3회 처리 시도 후 {topic}.DLT로 원본 메시지를 보냅니다.
+      KAFKA_RETRY_MAX_ATTEMPTS: 3
+      KAFKA_RETRY_BACKOFF_MS: 1000
+      KAFKA_DLT_SUFFIX: .DLT
     ports:
       - "8084:8080"
 

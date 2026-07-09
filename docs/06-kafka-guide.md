@@ -323,3 +323,42 @@ Producer와 Consumer를 한 서비스에서 함께 사용하기
 이벤트 체인
 후속 서비스 연동
 ```
+
+## Retry와 DLT
+
+consumer가 메시지를 처리하다가 예외를 던지면 Spring Kafka의 `DefaultErrorHandler`가 동작합니다.
+
+현재 설정:
+
+```text
+max-attempts = 3
+backoff-ms = 1000
+dlt-suffix = .DLT
+```
+
+흐름:
+
+```text
+consumer 처리 실패
+  |
+  v
+1초 대기 후 retry
+  |
+  v
+계속 실패
+  |
+  v
+DeadLetterPublishingRecoverer
+  |
+  v
+{원본 topic}.DLT로 메시지 발행
+```
+
+예시:
+
+```text
+order.created -> order.created.DLT
+payment.completed -> payment.completed.DLT
+```
+
+자세한 실습은 [Kafka Retry and DLT Guide](./09-kafka-retry-dlt-guide.md)를 봅니다.
